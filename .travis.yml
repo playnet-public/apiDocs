@@ -3,6 +3,6 @@ os:
 - linux
 before_install:
 - git clone https://github.com/bukalapak/snowboard.git $GOPATH/src/github.com/bukalapak/snowboard
-- $GOPATH/src/github.com/bukalapak/snowboard/make install
+- make -C $GOPATH/src/github.com/bukalapak/snowboard install
 script:
 - go test -v
