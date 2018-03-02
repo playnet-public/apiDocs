@@ -1,0 +1,8 @@
+language: go
+os:
+- linux
+before_script:
+- git clone https://github.com/bukalapak/snowboard.git $GOPATH/src/github.com/bukalapak/snowboard
+- $GOPATH/src/github.com/bukalapak/snowboard/make install
+script:
+- go test -v
