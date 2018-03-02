@@ -1,7 +1,7 @@
 language: go
 os:
 - linux
-before_script:
+before_install:
 - git clone https://github.com/bukalapak/snowboard.git $GOPATH/src/github.com/bukalapak/snowboard
 - $GOPATH/src/github.com/bukalapak/snowboard/make install
 script:
