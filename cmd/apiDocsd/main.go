@@ -47,6 +47,6 @@ func getRouter() *mux.Router {
 		Methods("GET").
 		Path("/render").
 		Name("RenderIt").
-		HandlerFunc(endpoints.renderIt)
+		HandlerFunc(endpoints.RenderIt)
 	return router
 }
