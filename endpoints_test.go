@@ -6,10 +6,11 @@ import (
 )
 
 func TestRenderHTML(t *testing.T) {
-	t.Log("test 1")
-	fileContents, _ := ioutil.ReadFile("test/someBlueprint.apib")
+	fileContents, err := ioutil.ReadFile("test/someBlueprint.apib")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
 
-	t.Log("test 2")
 	_, err := RenderHTML(&RequestBody{
 		Action:   "html",
 		Template: "",
