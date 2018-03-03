@@ -26,7 +26,7 @@ func TestRenderHTML(t *testing.T) {
 }
 
 func TestRenderJSON(t *testing.T) {
-	fileContents, _ := ioutil.ReadFile("test/someBlueprint.apib")
+	_, _ := ioutil.ReadFile("test/someBlueprint.apib")
 
 	_, err := endpoints.renderJSON(&RequestBody{
 		Action:   "json",
