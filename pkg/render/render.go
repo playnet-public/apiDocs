@@ -1,4 +1,4 @@
-package main
+package render
 
 import (
 	"bytes"
@@ -16,8 +16,18 @@ type RequestBody struct {
 	Input    []byte `json:"input,omitempty"`
 }
 
-func RenderIt(w http.ResponseWriter, r *http.Request) {
-	request, err := getRequestBody(r)
+type Endpoints struct {
+	Engine *snowboard.Parser
+}
+
+func NewEndpoints(engine *snowboard.Parser) *Endpoints {
+	return &Endpoints{
+		Engine: engine,
+	}
+}
+
+func (e *Endpoints) RenderIt(w http.ResponseWriter, r *http.Request) {
+	request, err := e.getRequestBody(r)
 	if err != nil {
 		w.WriteHeader(400)
 		return
@@ -25,9 +35,9 @@ func RenderIt(w http.ResponseWriter, r *http.Request) {
 
 	var bytes []byte
 	if request.Action == "html" {
-		bytes, err = RenderHTML(request)
+		bytes, err = e.renderHTML(request)
 	} else if request.Action == "json" {
-		bytes, err = RenderJSON(request)
+		bytes, err = e.renderJSON(request)
 	}
 
 	if err != nil {
@@ -41,8 +51,8 @@ func RenderIt(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RenderHTML(request *RequestBody) ([]byte, error) {
-	bp, err := snowboard.Parse(bytes.NewReader(request.Input), engine)
+func (e *Endpoints) renderHTML(request *RequestBody) ([]byte, error) {
+	bp, err := snowboard.Parse(bytes.NewReader(request.Input), *e.Engine)
 
 	if err != nil {
 		return nil, err
@@ -57,11 +67,11 @@ func RenderHTML(request *RequestBody) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func RenderJSON(request *RequestBody) ([]byte, error) {
-	return snowboard.ParseAsJSON(bytes.NewReader(request.Input), engine)
+func (e *Endpoints) renderJSON(request *RequestBody) ([]byte, error) {
+	return snowboard.ParseAsJSON(bytes.NewReader(request.Input), *e.Engine)
 }
 
-func getRequestBody(r *http.Request) (*RequestBody, error) {
+func (e *Endpoints) getRequestBody(r *http.Request) (*RequestBody, error) {
 	var request *RequestBody
 	return request, json.NewDecoder(r.Body).Decode(request)
 }

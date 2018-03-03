@@ -4,21 +4,24 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TheMysteriousVincent/liveinlife-restapi/pkg/config"
 	"github.com/bukalapak/snowboard/adapter/drafter"
 	snowboard "github.com/bukalapak/snowboard/parser"
 	"github.com/gorilla/mux"
+	"github.com/playnet-public/apiDocs/pkg/config"
+	"github.com/playnet-public/apiDocs/pkg/render"
 	"github.com/spf13/viper"
 	"github.com/urfave/negroni"
 )
 
 var (
-	engine        snowboard.Parser
+	endpoints     *render.Endpoints
+	engine        *snowboard.Parser
 	configuration *viper.Viper
 )
 
 func main() {
-	engine = drafter.Engine{}
+	engine = &drafter.Engine{}
+	endpoints = render.NewEndpoints(engine)
 	configuration = config.NewConfig("config.yml")
 	handleArgs()
 	handleEnvVars()
@@ -44,6 +47,6 @@ func getRouter() *mux.Router {
 		Methods("GET").
 		Path("/render").
 		Name("RenderIt").
-		HandlerFunc(RenderIt)
+		HandlerFunc(endpoints.renderIt)
 	return router
 }
