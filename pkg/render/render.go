@@ -13,14 +13,14 @@ import (
 type RequestBody struct {
 	Action   string `json:"action,omitempty"`
 	Template string `json:"template,omitempty"`
-	Input    []byte `json:"input,omitempty"`
+	Input    string `json:"input,omitempty"`
 }
 
 type Endpoints struct {
-	Engine *snowboard.Parser
+	Engine snowboard.Parser
 }
 
-func NewEndpoints(engine *snowboard.Parser) *Endpoints {
+func NewEndpoints(engine snowboard.Parser) *Endpoints {
 	return &Endpoints{
 		Engine: engine,
 	}
@@ -52,7 +52,8 @@ func (e *Endpoints) RenderIt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Endpoints) renderHTML(request *RequestBody) ([]byte, error) {
-	bp, err := snowboard.Parse(bytes.NewReader(request.Input), *e.Engine)
+	bp, err := snowboard.Load(request.Input, e.Engine)
+	//bp, err := snowboard.Parse(bytes.NewReader(request.Input), e.Engine)
 
 	if err != nil {
 		return nil, err
@@ -68,7 +69,7 @@ func (e *Endpoints) renderHTML(request *RequestBody) ([]byte, error) {
 }
 
 func (e *Endpoints) renderJSON(request *RequestBody) ([]byte, error) {
-	return snowboard.ParseAsJSON(bytes.NewReader(request.Input), *e.Engine)
+	return nil, nil //snowboard.ParseAsJSON(bytes.NewReader(request.Input), e.Engine)
 }
 
 func (e *Endpoints) getRequestBody(r *http.Request) (*RequestBody, error) {

@@ -20,7 +20,7 @@ var (
 )
 
 func main() {
-	engine = &drafter.Engine{}
+	engine = drafter.Engine{}
 	endpoints = render.NewEndpoints(engine)
 	configuration = config.NewConfig("config.yml")
 	handleArgs()

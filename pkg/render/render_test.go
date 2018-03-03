@@ -10,7 +10,7 @@ import (
 var endpoints = NewEndpoints(&drafter.Parser{})
 
 func TestRenderHTML(t *testing.T) {
-	fileContents, err := ioutil.ReadFile("test/someBlueprint.apib")
+	_, err := ioutil.ReadFile("test/someBlueprint.apib")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -18,7 +18,7 @@ func TestRenderHTML(t *testing.T) {
 	_, err = endpoints.renderHTML(&RequestBody{
 		Action:   "html",
 		Template: "",
-		Input:    fileContents,
+		Input:    "test/someBlueprint.apib",
 	})
 	if err != nil {
 		t.Fatal(err.Error())
@@ -31,7 +31,7 @@ func TestRenderJSON(t *testing.T) {
 	_, err := endpoints.renderJSON(&RequestBody{
 		Action:   "json",
 		Template: "",
-		Input:    fileContents,
+		Input:    "test/someBlueprint.apib",
 	})
 	if err != nil {
 		t.Fatal(err.Error())
