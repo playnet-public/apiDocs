@@ -11,7 +11,7 @@ func TestRenderHTML(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	_, err := RenderHTML(&RequestBody{
+	_, err = RenderHTML(&RequestBody{
 		Action:   "html",
 		Template: "",
 		Input:    fileContents,
