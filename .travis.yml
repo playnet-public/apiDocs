@@ -5,4 +5,4 @@ before_install:
 - git clone https://github.com/bukalapak/snowboard.git $GOPATH/src/github.com/bukalapak/snowboard
 - make -C $GOPATH/src/github.com/bukalapak/snowboard install
 script:
-- go test -v
+- go test -v ./
