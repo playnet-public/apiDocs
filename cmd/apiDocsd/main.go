@@ -15,7 +15,7 @@ import (
 
 var (
 	endpoints     *render.Endpoints
-	engine        *snowboard.Parser
+	engine        snowboard.Parser
 	configuration *viper.Viper
 )
 
