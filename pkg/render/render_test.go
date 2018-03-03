@@ -7,7 +7,7 @@ import (
 	"github.com/bukalapak/snowboard/adapter/drafter"
 )
 
-var endpoints = NewEndpoints(&drafter.Parser{})
+var endpoints = NewEndpoints(&drafter.Engine{})
 
 func TestRenderHTML(t *testing.T) {
 	_, err := ioutil.ReadFile("test/someBlueprint.apib")
