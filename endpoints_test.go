@@ -10,6 +10,7 @@ func TestRenderHTML(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
+	t.Log(fileContents)
 
 	_, err = RenderHTML(&RequestBody{
 		Action:   "html",
