@@ -1,7 +1,6 @@
 package render
 
 import (
-	"io/ioutil"
 	"testing"
 
 	"github.com/bukalapak/snowboard/adapter/drafter"
@@ -10,10 +9,10 @@ import (
 var endpoints = NewEndpoints(&drafter.Engine{})
 
 func TestRenderHTML(t *testing.T) {
-	_, err := ioutil.ReadFile("test/someBlueprint.apib")
+	/*_, err := ioutil.ReadFile("test/someBlueprint.apib")
 	if err != nil {
 		t.Fatal(err.Error())
-	}
+	}*/
 
 	_, err = endpoints.renderHTML(&RequestBody{
 		Action:   "html",
@@ -26,9 +25,9 @@ func TestRenderHTML(t *testing.T) {
 }
 
 func TestRenderJSON(t *testing.T) {
-	_, _ := ioutil.ReadFile("test/someBlueprint.apib")
+	///_, err := ioutil.ReadFile("test/someBlueprint.apib")
 
-	_, err := endpoints.renderJSON(&RequestBody{
+	_, err = endpoints.renderJSON(&RequestBody{
 		Action:   "json",
 		Template: "",
 		Input:    "test/someBlueprint.apib",
