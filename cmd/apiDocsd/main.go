@@ -6,6 +6,7 @@ import (
 
 	"github.com/bukalapak/snowboard/adapter/drafter"
 	snowboard "github.com/bukalapak/snowboard/parser"
+	"github.com/golang/glog"
 	"github.com/gorilla/mux"
 	"github.com/playnet-public/apiDocs/pkg/render"
 	"github.com/playnet-public/flagenv"
@@ -20,12 +21,13 @@ var (
 )
 
 func main() {
-	engine = drafter.Engine{}
 	flagenv.EnvPrefix = "APIDOCSD_"
 	handleArgs()
-
+	glog.Info("server is setting up")
+	engine = drafter.Engine{}
 	endpoints = render.NewEndpoints(engine, defaultTemplate)
 
+	glog.Infof("server is listening on %s:%d", httpHost, httpPort)
 	http.ListenAndServe(
 		fmt.Sprintf("%s:%d", httpHost, httpPort),
 		getHandler(),
