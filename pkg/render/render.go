@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/bukalapak/snowboard/render"
@@ -17,12 +18,14 @@ type RequestBody struct {
 }
 
 type Endpoints struct {
-	Engine snowboard.Parser
+	DefaultTemplate string
+	Engine          snowboard.Parser
 }
 
-func NewEndpoints(engine snowboard.Parser) *Endpoints {
+func NewEndpoints(engine snowboard.Parser, template string) *Endpoints {
 	return &Endpoints{
-		Engine: engine,
+		Engine:          engine,
+		DefaultTemplate: template,
 	}
 }
 
@@ -33,11 +36,15 @@ func (e *Endpoints) RenderIt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var bytes []byte
+	if request.Template == "" {
+		request.Template = e.DefaultTemplate
+	}
+
+	var res string
 	if request.Action == "html" {
-		bytes, err = e.renderHTML(request)
+		res, err = e.renderHTML(request)
 	} else if request.Action == "json" {
-		bytes, err = e.renderJSON(request)
+		res, err = e.renderJSON(request)
 	}
 
 	if err != nil {
@@ -45,34 +52,38 @@ func (e *Endpoints) RenderIt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = w.Write(bytes)
+	_, err = w.Write([]byte(res))
 	if err != nil {
 		w.WriteHeader(400)
 	}
 }
 
-func (e *Endpoints) renderHTML(request *RequestBody) ([]byte, error) {
-	bp, err := snowboard.Load(request.Input, e.Engine)
-	//bp, err := snowboard.Parse(bytes.NewReader(request.Input), e.Engine)
+func (e *Endpoints) renderHTML(request *RequestBody) (string, error) {
+	reader := bytes.NewReader([]byte(request.Input))
+	bp, err := snowboard.Parse(reader, e.Engine)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	buf := bytes.NewBuffer([]byte{})
-	err = render.HTML(request.Template, buf, bp)
+	tfStream, _ := ioutil.ReadFile(request.Template)
+
+	var buf bytes.Buffer
+	err = render.HTML(string(tfStream), &buf, bp)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return buf.Bytes(), nil
+	return buf.String(), nil
 }
 
-func (e *Endpoints) renderJSON(request *RequestBody) ([]byte, error) {
-	return nil, nil //snowboard.ParseAsJSON(bytes.NewReader(request.Input), e.Engine)
+func (e *Endpoints) renderJSON(request *RequestBody) (string, error) {
+	result, err := snowboard.ParseAsJSON(bytes.NewReader([]byte(request.Input)), e.Engine)
+	return string(result), err
 }
 
 func (e *Endpoints) getRequestBody(r *http.Request) (*RequestBody, error) {
-	var request *RequestBody
-	return request, json.NewDecoder(r.Body).Decode(request)
+	var request RequestBody
+	err := json.NewDecoder(r.Body).Decode(&request)
+	return &request, err
 }

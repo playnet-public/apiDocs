@@ -7,46 +7,52 @@ import (
 	"github.com/bukalapak/snowboard/adapter/drafter"
 	snowboard "github.com/bukalapak/snowboard/parser"
 	"github.com/gorilla/mux"
-	"github.com/playnet-public/apiDocs/pkg/config"
-	"github.com/playnet-public/apiDocs/pkg/render"
-	"github.com/spf13/viper"
+	"github.com/playnet-public/flagenv"
 	"github.com/urfave/negroni"
+	"gitlab.allgameplay.de/Vincent/apiDocs/pkg/render"
 )
 
 var (
-	endpoints     *render.Endpoints
-	engine        snowboard.Parser
-	configuration *viper.Viper
+	endpoints                 *render.Endpoints
+	engine                    snowboard.Parser
+	httpHost, defaultTemplate string
+	httpPort                  int
 )
 
 func main() {
 	engine = drafter.Engine{}
-	endpoints = render.NewEndpoints(engine)
-	configuration = config.NewConfig("config.yml")
+	flagenv.EnvPrefix = "APIDOCSD_"
 	handleArgs()
-	handleEnvVars()
 
-	n := negroni.Classic()
-	n.UseHandler(getRouter())
+	endpoints = render.NewEndpoints(engine, defaultTemplate)
 
 	http.ListenAndServe(
-		fmt.Sprintf("%s:%d", configuration.GetString("http.host"), configuration.GetInt("http.port")),
-		n,
+		fmt.Sprintf("%s:%d", httpHost, httpPort),
+		getHandler(),
 	)
 }
 
 func handleArgs() {
-}
-
-func handleEnvVars() {
+	flagenv.StringVar(&httpHost, "address", "localhost", "The host of the server.")
+	flagenv.IntVar(&httpPort, "port", 8088, "The listening port of the server.")
+	flagenv.StringVar(&defaultTemplate, "defaultTemplate", "", "Path to default template.")
+	flagenv.Parse()
 }
 
 func getRouter() *mux.Router {
 	router := mux.NewRouter()
+
 	router.
-		Methods("GET").
+		Methods("POST").
 		Path("/render").
 		Name("RenderIt").
 		HandlerFunc(endpoints.RenderIt)
+
 	return router
+}
+
+func getHandler() http.Handler {
+	n := negroni.Classic()
+	n.UseHandler(getRouter())
+	return n
 }

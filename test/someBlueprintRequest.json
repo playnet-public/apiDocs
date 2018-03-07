@@ -1,0 +1,4 @@
+{
+    "action": "html",
+    "input": "FORMAT: 1A\n# Tests\n# Group Test Blueprint\n## This is just a test url [/render]\n### There is only one method [GET]\n+ response 200 (application/html)"
+}
