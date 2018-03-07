@@ -7,9 +7,9 @@ import (
 	"github.com/bukalapak/snowboard/adapter/drafter"
 	snowboard "github.com/bukalapak/snowboard/parser"
 	"github.com/gorilla/mux"
+	"github.com/playnet-public/apiDocs/pkg/render"
 	"github.com/playnet-public/flagenv"
 	"github.com/urfave/negroni"
-	"gitlab.allgameplay.de/Vincent/apiDocs/pkg/render"
 )
 
 var (
